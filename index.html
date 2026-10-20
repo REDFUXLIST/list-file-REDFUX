@@ -1,0 +1,291 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>REDFUX FILE</title>
+<meta name="theme-color" content="#0a0305">
+<link rel="icon" href="favicon.png">
+<style>
+/* Layout: wallpaper galaxy blur fullscreen, logo hero, preview video, daftar paket, bar total fixed, popup Detail Pesanan + QRIS */
+:root{--bg:#0a0305;--card:rgba(30,6,10,.62);--line:rgba(255,77,94,.30);--txt:#fff0f0;--mute:#d3a5a9;--a:#ff4d5e;--b:#b3001b;--ok:#22c55e;--navbg:rgba(10,3,5,.82);--barbg:rgba(14,4,7,.9);--on:#2a0409;--sheet:#1a0609;--warn:#ffb020;color-scheme:dark}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--txt);font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;font-size:16px;line-height:1.5;padding-block:0 92px;min-height:100vh}
+body.lock{overflow:hidden}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:40;background:var(--bg)}
+
+.wall{position:fixed;inset:0;z-index:-2;overflow:hidden;background:var(--bg)}
+.wall video{position:absolute;inset:-6%;width:112%;height:112%;object-fit:cover;filter:blur(14px) saturate(1.1);transform:translateZ(0)}
+.wall::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(10,3,5,.55),rgba(10,3,5,.72))}
+
+.wrap{max-width:752px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--navbg);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+nav .wrap{display:flex;justify-content:space-between;align-items:center;height:58px;gap:8px}
+.brand{display:flex;align-items:center;gap:10px;font-weight:800;letter-spacing:2px;font-size:15px;min-width:0}
+.brand img{width:34px;height:34px;border-radius:50%;object-fit:cover;border:1.5px solid var(--a);box-shadow:0 0 12px rgba(255,77,94,.6);flex:none}
+.brand span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.btn{display:inline-block;border:0;cursor:pointer;text-decoration:none;font:inherit;font-weight:700;font-size:14px;padding:11px 18px;border-radius:12px;color:#fff;background:linear-gradient(90deg,var(--b),var(--a));transition:transform .15s;box-shadow:0 4px 20px rgba(220,20,40,.35);text-align:center}
+.btn:active{transform:scale(.96)}
+.btn:focus-visible,.pkg:focus-visible,.x:focus-visible,input:focus-visible{outline:2px solid #fff;outline-offset:2px}
+.btn.ghost{background:rgba(30,6,10,.5);border:1px solid var(--line);box-shadow:none}
+.btn.wa{background:var(--ok);color:#04130a;box-shadow:0 4px 20px rgba(34,197,94,.3)}
+
+.hero{padding-block:30px 20px;text-align:center}
+.logo{display:block;width:min(340px,86vw);max-width:100%;height:auto;margin:0 auto 14px;filter:drop-shadow(0 0 26px rgba(220,20,40,.65))}
+.hero h1{font-size:clamp(24px,6.5vw,34px);line-height:1.15;margin:0 0 10px;text-shadow:0 2px 20px rgba(0,0,0,.6);text-wrap:balance}
+.hero p{color:var(--mute);margin:0 0 16px}
+.badges{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-bottom:20px}
+.badges span{font-size:12px;padding:5px 12px;border-radius:99px;border:1px solid var(--line);color:var(--a);background:var(--card)}
+
+.preview{position:relative;border-radius:18px;overflow:hidden;border:1px solid var(--line);margin:22px 0 8px;background:#000;aspect-ratio:16/9;max-width:100%;box-shadow:0 0 40px rgba(220,20,40,.3)}
+.preview video{width:100%;height:100%;object-fit:cover;display:block}
+.live{position:absolute;top:10px;left:10px;background:#ef4444;color:#fff;font-size:11px;font-weight:800;padding:3px 10px;border-radius:99px;letter-spacing:1px;animation:pulse 1.5s infinite}
+@keyframes pulse{50%{opacity:.55}}
+
+h2{font-size:18px;margin:30px 0 14px;text-shadow:0 2px 12px rgba(0,0,0,.6)}
+.grid{display:grid;gap:10px}
+.gt{margin-top:14px;font-weight:800;letter-spacing:1px;font-size:14px;color:var(--a);text-shadow:0 2px 12px rgba(0,0,0,.7)}
+.gt:first-child{margin-top:0}
+.pkg{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:14px 16px;background:var(--card);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border:1.5px solid var(--line);border-radius:14px;cursor:pointer;transition:.15s;user-select:none}
+.pkg .n{font-weight:700}.pkg .d{font-size:13px;color:var(--mute)}
+.pkg .p{font-weight:800;color:var(--a);white-space:nowrap;font-variant-numeric:tabular-nums}
+.pkg.on{border-color:var(--a);background:linear-gradient(135deg,rgba(255,77,94,.22),rgba(220,20,40,.22))}
+.pkg .chk{width:22px;height:22px;border-radius:50%;border:2px solid var(--line);flex:none;display:grid;place-items:center;font-size:13px;color:transparent}
+.pkg.on .chk{background:var(--a);border-color:var(--a);color:var(--on)}
+.pkg .l{display:flex;gap:12px;align-items:center;min-width:0}
+.small{font-size:13px;color:var(--mute)}
+footer{text-align:center;color:var(--mute);font-size:12px;padding-block:30px 10px}
+.bar{position:fixed;left:0;right:0;bottom:0;z-index:30;background:var(--barbg);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-top:1px solid var(--line);padding:10px max(16px,env(safe-area-inset-right,0px)) calc(10px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px))}
+.bar .wrap{display:flex;justify-content:space-between;align-items:center;padding-inline:0}
+.bar .t{font-size:12px;color:var(--mute)}.bar .v{font-size:18px;font-weight:800;font-variant-numeric:tabular-nums}
+
+.toast{position:fixed;left:50%;bottom:calc(88px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);z-index:60;background:#3a0a12;border:1px solid var(--a);color:var(--txt);padding:10px 16px;border-radius:12px;font-size:14px;font-weight:600;max-width:calc(100% - 32px)}
+
+/* popup Detail Pesanan */
+.modal{position:fixed;inset:0;z-index:50;background:rgba(5,1,2,.78);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);display:flex;align-items:flex-start;justify-content:center;overflow-y:auto;padding:calc(16px + env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) calc(24px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px))}
+.sheet{position:relative;width:100%;max-width:440px;margin:auto;background:var(--sheet);border:1px solid var(--line);border-radius:20px;padding:22px 18px 20px;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,.6)}
+.x{position:absolute;top:10px;right:10px;width:36px;height:36px;border-radius:50%;border:1px solid var(--line);background:transparent;color:var(--txt);font-size:18px;cursor:pointer}
+.sheet h3{margin:0 0 14px;font-size:22px;color:var(--a);letter-spacing:.5px}
+.kv{display:flex;justify-content:space-between;gap:12px;padding:6px 0;font-size:15px;text-align:left;align-items:center}
+.kv span:first-child{color:var(--mute)}
+.kv b{font-variant-numeric:tabular-nums;text-align:right}
+.st{color:#fbbf24}
+.kv input{width:60%;min-width:0;background:rgba(255,255,255,.06);border:1px solid var(--line);border-radius:8px;color:var(--txt);font:inherit;font-size:15px;padding:7px 10px;text-align:right}
+.kv input::placeholder{color:var(--mute)}
+.items{list-style:none;margin:10px 0 0;padding:10px 0 0;border-top:1px dashed var(--line);text-align:left;font-size:14px;color:var(--mute)}
+.items li{display:flex;justify-content:space-between;gap:12px;padding:3px 0;font-variant-numeric:tabular-nums}
+.nom{margin:16px 0 4px;font-size:14px;color:var(--mute)}
+.nom b{display:block;font-size:34px;line-height:1.2;color:var(--warn);font-variant-numeric:tabular-nums}
+.warn{color:var(--warn);font-weight:800;font-size:13px;line-height:1.4;margin:4px 0 14px}
+.qr{width:min(280px,82%);max-width:100%;border-radius:12px;background:#fff;display:block;margin:0 auto 8px}
+.sheet .btn.wa{display:block;width:100%;font-size:16px;padding:14px;margin-top:14px}
+.mus{position:fixed;right:max(16px,env(safe-area-inset-right,0px));bottom:calc(88px + env(safe-area-inset-bottom,0px));z-index:36;width:46px;height:46px;border-radius:50%;border:1px solid var(--line);background:var(--barbg);color:var(--mute);display:grid;place-items:center;cursor:pointer;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);padding:0}
+.mus svg{width:22px;height:22px;display:block}
+.mus.on{color:var(--a);border-color:var(--a);animation:glow 2s ease-in-out infinite}
+.mus:not(.on)::after{content:"";position:absolute;width:28px;height:2px;background:var(--mute);transform:rotate(-45deg);border-radius:2px}
+@keyframes glow{50%{box-shadow:0 0 18px rgba(255,77,94,.7)}}
+.mus:focus-visible{outline:2px solid #fff;outline-offset:2px}
+.pkg.off{opacity:.55;cursor:not-allowed}.pkg.off .chk{opacity:.3}.pkg.off .p{color:var(--mute);font-size:13px}
+.dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:6px}.dot.ok{background:var(--ok)}.dot.no{background:#ef4444}
+@media (prefers-reduced-motion:reduce){.live{animation:none}.mus.on{animation:none}html{scroll-behavior:auto}}
+body{margin:0}img{max-width:100%}[hidden]{display:none!important}
+</style>
+</head>
+<body>
+
+<div class="wall"><video src="bg.mp4" autoplay muted loop playsinline preload="auto"></video></div>
+
+<nav><div class="wrap">
+  <div class="brand"><img src="favicon.png" alt="logo"><span>REDFUX FILE</span></div>
+  <button class="btn ghost" type="button" id="payNav">Bayar / QRIS</button>
+</div></nav>
+
+<main class="wrap">
+  <section class="hero">
+    <img class="logo" src="logo.png" alt="REDFUX FILE">
+    <h1>Menu Harga<br>REDFUX FILE</h1>
+    <p>Pilih paket yang kamu mau, bayar lewat QRIS, lalu pesan otomatis terkirim ke admin sesuai paket pilihanmu.</p>
+    <div class="badges"><span>Proses cepat</span><span>Terpercaya</span><span>Support admin</span></div>
+    <a class="btn" href="#paket">Lihat Paket</a>
+
+    <div class="preview">
+      <video src="live.mp4" autoplay muted loop playsinline></video>
+      <div class="live">PREVIEW</div>
+    </div>
+    <div class="small">Preview diputar otomatis</div>
+  </section>
+
+  <section id="paket">
+    <h2>MENU HARGA OB55 <span class="small">(tap untuk pilih, bisa lebih dari satu)</span></h2>
+    <div class="grid" id="list"></div>
+  </section>
+
+  <footer>© <span id="yr"></span> REDFUX FILE</footer>
+</main>
+
+<div class="bar"><div class="wrap">
+  <div><div class="t" id="cnt">0 paket dipilih</div><div class="v" id="tot">Rp 0</div></div>
+  <button class="btn" type="button" id="payBtn">Bayar Sekarang</button>
+</div></div>
+
+<button class="mus" type="button" id="mus" aria-label="Putar musik" aria-pressed="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg></button>
+<audio id="aud" src="music.mp3" loop preload="none"></audio>
+
+<div class="toast" id="toast" hidden role="status">Pilih paket dulu ya.</div>
+
+<div class="modal" id="modal" hidden role="dialog" aria-modal="true" aria-labelledby="mt">
+  <div class="sheet">
+    <button class="x" type="button" id="mx" aria-label="Tutup">✕</button>
+    <h3 id="mt">Detail Pesanan</h3>
+    <div class="kv"><span>ID Order</span><b id="oid">-</b></div>
+    <div class="kv"><span>Nama</span><input id="nm" type="text" maxlength="40" placeholder="Nama kamu" autocomplete="name"></div>
+    <div class="kv"><span>Status</span><b class="st">BELUM BAYAR</b></div>
+    <ul class="items" id="mitems"></ul>
+    <div class="nom">Nominal Bayar<b id="mtot">Rp 0</b></div>
+    <p class="warn">‼️ HARAP KIRIMKAN SESUAI NOMINAL BAYAR ‼️<br>(SEKALI KIRIM, TIDAK KURANG, DAN TIDAK LEBIH)</p>
+    <img class="qr" src="qris.jpg" alt="QRIS REDFUX FILE">
+    <p class="small"><b>Nama penerima:</b> GUSROFIQBEKAM - ELECTRONICS</p>
+    <p class="small">Scan pakai DANA, OVO, GoPay, ShopeePay, LinkAja, atau m-banking. Simpan QR dengan tekan lama gambarnya.</p>
+    <a class="btn wa" id="wa" href="#" target="_blank" rel="noopener">SUDAH BAYAR</a>
+    <p class="small" style="margin:8px 0 0">Pesananmu otomatis tersalin. Di chat WhatsApp admin, tempel (paste) pesannya lalu kirim bukti transfer.</p>
+  </div>
+</div>
+
+<script>
+/* ====== EDIT BAGIAN INI ====== */
+const STORE = "REDFUX FILE";
+const WA_LINK = "https://wa.me/message/QEEBXXH3ZKO2A1"; // link pesan WhatsApp admin
+const PACKAGES = [ // MENU HARGA OB55
+  {id:1, g:"Aim Precision Head PFS-LEG!TS VIP OB55", name:"Aim Precision Head Control", desc:"File OB55", price:15000},
+  {id:2, g:"Aim Precision Head PFS-LEG!TS VIP OB55", name:"Aim Precision Head Focus", desc:"File OB55", price:35000},
+  {id:3, g:"Aim Precision Head PFS-LEG!TS VIP OB55", name:"Aim Precision Head Matrix", desc:"File OB55", price:75000},
+  {id:4, g:"Aim Precision Head PFS-LEG!TS VIP OB55", name:"Aim Precision Head Prime", desc:"File OB55", price:145000},
+  {id:5, g:"Drag Headshots Precision HEAXLOCK PFS-LEG!TS VIP OB55", name:"HeaxLock VorteXite", desc:"File OB55", price:10000},
+  {id:6, g:"Drag Headshots Precision HEAXLOCK PFS-LEG!TS VIP OB55", name:"HeaxLock NexuSic", desc:"File OB55", price:25000},
+  {id:7, g:"Drag Headshots Precision HEAXLOCK PFS-LEG!TS VIP OB55", name:"HeaxLock XtremeTal", desc:"File OB55", price:45000},
+  {id:8, g:"Drag Headshots Precision HEAXLOCK PFS-LEG!TS VIP OB55", name:"HeaxLock UltraMax", desc:"File OB55", price:85000},
+  {id:9, g:"App Tools Settings OB55", name:"Nova Drive", desc:"<span class=\"dot ok\"></span>Tersedia", price:50000},
+  {id:10, g:"App Tools Settings OB55", name:"Veltrix HeadTrick", desc:"<span class=\"dot no\"></span>Maintenance / Update", price:0, status:"maint"},
+  {id:11, g:"App Tools Settings OB55", name:"Void", desc:"<span class=\"dot ok\"></span>Tersedia", price:180000},
+];
+/* ============================= */
+
+const rp = n => "Rp " + n.toLocaleString("id-ID");
+const sel = new Set();
+const $ = id => document.getElementById(id);
+$("yr").textContent = new Date().getFullYear();
+
+let lastG = "";
+$("list").innerHTML = PACKAGES.map(p => {
+  const head = p.g !== lastG ? `<div class="gt">${p.g}</div>` : "";
+  lastG = p.g;
+  const off = p.status === "maint";
+  return head + `
+  <div class="pkg${off ? " off" : ""}" data-id="${p.id}" ${off ? 'aria-disabled="true"' : 'tabindex="0" role="button" aria-pressed="false"'}>
+    <div class="l"><div class="chk">✓</div>
+      <div><div class="n">${p.name}</div><div class="d">${p.desc}</div></div></div>
+    <div class="p">${off ? "Maintenance" : rp(p.price)}</div>
+  </div>`;
+}).join("");
+
+const picked = () => PACKAGES.filter(p => sel.has(p.id));
+const totalOf = items => items.reduce((a,p) => a + p.price, 0);
+
+function toggle(el){
+  if(el.classList.contains("off")) return;
+  const id = +el.dataset.id;
+  sel.has(id) ? sel.delete(id) : sel.add(id);
+  el.classList.toggle("on");
+  el.setAttribute("aria-pressed", sel.has(id));
+  render();
+}
+document.querySelectorAll(".pkg").forEach(el => {
+  el.onclick = () => toggle(el);
+  el.onkeydown = e => { if(e.key === "Enter" || e.key === " "){ e.preventDefault(); toggle(el); } };
+});
+
+function render(){
+  const items = picked();
+  $("cnt").textContent = items.length + " paket dipilih";
+  $("tot").textContent = rp(totalOf(items));
+}
+
+/* toast */
+let tt;
+function toast(msg){
+  const t = $("toast"); t.textContent = msg; t.hidden = false;
+  clearTimeout(tt); tt = setTimeout(() => { t.hidden = true; }, 2200);
+}
+
+/* popup Detail Pesanan */
+let orderId = "";
+let orderMsg = "";
+function waLink(){
+  const items = picked(), name = $("nm").value.trim() || "-";
+  orderMsg = `Halo admin ${STORE}, saya sudah bayar.\n\nID Order: ${orderId}\nNama: ${name}\n\nPesanan:\n`
+    + items.map((p,i) => `${i+1}. ${p.name} - ${rp(p.price)}`).join("\n")
+    + `\n\nTotal: ${rp(totalOf(items))}\n\nBukti transfer saya lampirkan.`;
+  $("wa").href = WA_LINK;
+}
+$("wa").addEventListener("click", () => {
+  try { navigator.clipboard.writeText(orderMsg).then(() => toast("Pesanan disalin. Tempel (paste) di chat WA.")).catch(() => {}); } catch(e){}
+});
+function openPay(){
+  const items = picked();
+  if(!items.length){
+    toast("Pilih paket dulu ya.");
+    $("paket").scrollIntoView({behavior:"smooth"});
+    return;
+  }
+  orderId = "ORD" + Math.floor(100000 + Math.random() * 900000);
+  $("oid").textContent = orderId;
+  $("mtot").textContent = rp(totalOf(items));
+  $("mitems").innerHTML = items.map(p => `<li><span>${p.name}</span><span>${rp(p.price)}</span></li>`).join("");
+  waLink();
+  $("modal").hidden = false;
+  document.body.classList.add("lock");
+  $("modal").scrollTop = 0;
+  $("mx").focus();
+}
+function closePay(){
+  $("modal").hidden = true;
+  document.body.classList.remove("lock");
+}
+$("payBtn").onclick = openPay;
+$("payNav").onclick = openPay;
+$("mx").onclick = closePay;
+$("modal").addEventListener("click", e => { if(e.target === $("modal")) closePay(); });
+addEventListener("keydown", e => { if(e.key === "Escape" && !$("modal").hidden) closePay(); });
+$("nm").addEventListener("input", waLink);
+render();
+
+/* musik latar */
+const aud = $("aud"), mus = $("mus");
+let musicOff = false;
+try { musicOff = localStorage.getItem("bzx_music") === "off"; } catch(e){}
+const saveMusic = v => { try { localStorage.setItem("bzx_music", v); } catch(e){} };
+function musicUI(on){
+  mus.classList.toggle("on", on);
+  mus.setAttribute("aria-pressed", on);
+  mus.setAttribute("aria-label", on ? "Matikan musik" : "Putar musik");
+}
+function playMusic(){
+  aud.volume = 0.5;
+  const r = aud.play();
+  if(r && r.then) r.then(() => musicUI(true)).catch(() => {});
+}
+mus.addEventListener("click", () => {
+  if(aud.paused){ musicOff = false; saveMusic("on"); playMusic(); }
+  else { aud.pause(); musicOff = true; saveMusic("off"); musicUI(false); }
+});
+["click","touchend","keydown"].forEach(ev => addEventListener(ev, e => {
+  if(e.target.closest && e.target.closest("#mus")) return;
+  if(aud.paused && !musicOff) playMusic();
+}));
+
+document.querySelectorAll("video").forEach(v => { v.muted = true; v.play().catch(()=>{}); });
+addEventListener("touchstart", () => document.querySelectorAll("video").forEach(v => v.paused && v.play().catch(()=>{})), {once:true});
+</script>
+</body>
+</html>
